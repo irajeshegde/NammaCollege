@@ -301,6 +301,8 @@ class _QuestionAnswer extends State<QuestionAnswer> {
                             ),
                           ),
                           devHoKya(doc.data['user']),
+                          branchKyaHaiBhai(doc),
+
                         ],
                       ),
                     ),
@@ -427,6 +429,41 @@ class _QuestionAnswer extends State<QuestionAnswer> {
               child: RichText(
                 text: TextSpan(
                   text: 'dev',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    else
+      return new Container();
+  }
+
+  Widget branchKyaHaiBhai(DocumentSnapshot doc){
+    if(doc.data['branch']!=null){
+      return Padding(
+        padding: const EdgeInsets.only(left:5.0),
+        child: new Align(
+          alignment: Alignment.bottomRight,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: new BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 8.0, right: 8.0, top: 2.0, bottom: 2.0),
+              child: RichText(
+                text: TextSpan(
+                  text: doc.data['branch'],
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 10.0,

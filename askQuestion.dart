@@ -29,6 +29,7 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
   String question;
   String subject;
   String branch;
+  int votes=0;
  // String _currencies = {"ISE","CSE","ECE","EEE","ME"};
 
 
@@ -183,7 +184,7 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
             ),
           );
         },
-        
+
       ),
 
       new Container(
@@ -292,7 +293,7 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
       _formKey.currentState.save();
       DocumentReference ref = await db
           .collection('CRUD')
-          .add({'name': '$question ', 'subject': '$subject ', 'user': '$userEmail', 'time2': '$time2','time':'$time','branch':'$branch'});
+          .add({'name': '$question ', 'subject': '$subject ', 'user': '$userEmail', 'time2': '$time2','time':'$time','branch':'$branch','votes':votes});
       setState(() => id = ref.documentID);
       print(ref.documentID);
     }

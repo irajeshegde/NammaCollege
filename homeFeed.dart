@@ -14,6 +14,14 @@ class HomePage1 extends StatefulWidget {
 class _HomePage1 extends State<HomePage1> {
   final db = Firestore.instance;
 
+
+  void updateData(DocumentSnapshot doc) async {
+    await db
+        .collection('CRUD')
+        .document(doc.documentID)
+        .updateData({'votes': doc.data['votes']+1});
+  }
+
   Widget buildQuestion(DocumentSnapshot doc) {
     return Padding(
       padding:
@@ -112,6 +120,8 @@ class _HomePage1 extends State<HomePage1> {
                           devHoKya(doc),
                           //branch tag
                           branchKyaHaiBhai(doc),
+                          votesKitnaHaiBhai(doc),
+                          voteKarogeBhai(doc),
                           new Container(
                             width: 20,
                           ),
@@ -145,6 +155,77 @@ class _HomePage1 extends State<HomePage1> {
             )),
       ),
     );
+  }
+
+  Widget voteKarogeBhai(DocumentSnapshot doc){
+    if(doc.data['votes']!=null) {
+      return new Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: new SizedBox(
+          width: 20.0,
+          height: 20.0,
+          child: new RaisedButton(
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20)),
+            color: Colors.white,
+            elevation: 4.0,
+            splashColor: giveSplashColor(),
+            onPressed: () {
+              updateData(doc);
+              print("update kiya hopefully\n");
+            },
+            child: RichText(
+              text: TextSpan(
+                text: '',
+                style: TextStyle(
+                  color: Colors.black,
+                  decorationStyle: TextDecorationStyle.wavy,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    else
+      return new Container();
+  }
+
+  Widget votesKitnaHaiBhai(DocumentSnapshot doc){
+    if(doc.data['votes']!=null){
+      return Padding(
+        padding: const EdgeInsets.only(left:5.0),
+        child: new Align(
+          alignment: Alignment.bottomRight,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: new BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 8.0, right: 8.0, top: 2.0, bottom: 2.0),
+              child: RichText(
+                text: TextSpan(
+                  text: 'votes: '+ doc.data['votes'].toString(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    else
+      return new Container();
   }
 
 
