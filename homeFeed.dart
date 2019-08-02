@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'questionAndComments.dart';
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 
 //PAGE1
 class HomePage1 extends StatefulWidget {
@@ -13,14 +14,58 @@ class HomePage1 extends StatefulWidget {
 
 class _HomePage1 extends State<HomePage1> {
   final db = Firestore.instance;
+  String userEmail = "";
 
 
-  void updateData(DocumentSnapshot doc) async {
+  void updateVotesData(DocumentSnapshot doc) async {
     await db
         .collection('CRUD')
         .document(doc.documentID)
         .updateData({'votes': doc.data['votes']+1});
   }
+
+ /* void updateVoterDzata(DocumentSnapshot doc) async {
+    await db
+        .collection('CRUD')
+        .document(doc.documentID)
+        .collection('voter_data')
+        .updateData({'votes': doc.data['votes']+1});
+  }*/
+
+  void updateVoterData(DocumentSnapshot doc) async {
+
+    await findTheUserName();  //await makes sure the next command is not run before this function finishes executing
+
+    //await db.collection('CRUD').document(doc.documentID).delete();
+    //if (_formKey.currentState.validate()) {
+      //_formKey.currentState.save();
+      DocumentReference ref = await db
+          .collection('CRUD')
+          .document(doc.documentID)
+          .collection('voter_data')
+          .add({'name': '$userEmail '});
+      print('naam hai $userEmail');
+      //.add({'name': '$ans '})
+      // setState(() => id = ref.documentID);
+      // print(ref.documentID);
+    }
+
+  findTheUserName() async {
+    FirebaseUser name = await FirebaseAuth.instance.currentUser();
+    userEmail = name.email;
+    var firstName = userEmail.split('@');
+
+    setState(() {
+      userEmail = firstName[0];
+    });
+
+    //return userEmail;
+
+  }
+
+
+
+  
 
   Widget buildQuestion(DocumentSnapshot doc) {
     return Padding(
@@ -171,8 +216,7 @@ class _HomePage1 extends State<HomePage1> {
             elevation: 4.0,
             splashColor: giveSplashColor(),
             onPressed: () {
-              updateData(doc);
-              print("update kiya hopefully\n");
+              areYouAllowedToVote(doc);
             },
             child: RichText(
               text: TextSpan(
@@ -192,6 +236,27 @@ class _HomePage1 extends State<HomePage1> {
     else
       return new Container();
   }
+
+
+  Widget areYouAllowedToVote(DocumentSnapshot doc){
+    if(doc.data['votes']==0){
+      updateVotesData(doc);
+      updateVoterData(doc);
+      print("update kiya hopefully\n");
+    }
+    else{
+      if(haveYouVotedBefore(doc)) {
+        updateVotesData(doc);
+        updateVoterData(doc);
+      }
+      print("update kiya hopefully\n");
+    }
+  }
+
+  bool haveYouVotedBefore(DocumentSnapshot doc){
+
+  }
+
 
   Widget votesKitnaHaiBhai(DocumentSnapshot doc){
     if(doc.data['votes']!=null){
